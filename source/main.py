@@ -139,10 +139,10 @@ for row in newRows:
 
 # 3.1) DataFrames comparison considering P/N and Received/Required quantities.
 receivedDict = {}
-
 missing = frames[1].copy(deep=True)
 extra = inFrame.copy(deep=True)
-key = -1
+req_idx, rec_idx = [], []
+key = 0
 for ind1 in frames[1].index:
     reqItem = ''.join(filter(str.isalnum, frames[1]['PN'][ind1]))
     for ind2 in inFrame.index:
@@ -153,11 +153,13 @@ for ind1 in frames[1].index:
             reqQTY = frames[1]['QTY'][ind1]
             inQTY = inFrame['QTY'][ind2]
             difQTY = inQTY - reqQTY
+            req_idx.append(ind1)
+            rec_idx.append(ind2)
             values = [PN, reqQTY, inQTY, difQTY]
             receivedDict[key] = values
 
-            missing.drop(index=ind1, inplace=True)
-            extra.drop(index=ind2, inplace=True)
+missing.drop(index=req_idx, inplace=True)
+extra.drop(index=rec_idx, inplace=True)
 
 missing.reset_index(drop=True, inplace=True)
 extra.reset_index(drop=True, inplace=True)
